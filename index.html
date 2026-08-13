@@ -6,10 +6,7 @@
 <title>Generador de Reporte de Asistencias - Top Neumaticos</title>
 <style>
   * { box-sizing: border-box; }
-  html, body {
-    height: 100%;
-    margin: 0;
-  }
+  html, body { height: 100%; margin: 0; }
   body {
     font-family: 'Segoe UI', system-ui, Arial, sans-serif;
     background: radial-gradient(circle at 50% 0%, #f5f6f7 0%, #e7e9ec 100%);
@@ -51,26 +48,62 @@
     border-radius: 20px;
     margin-bottom: 16px;
   }
-  .banner h1 {
-    margin: 0 0 8px 0;
-    font-size: 22px;
-    font-weight: 700;
-    letter-spacing: -0.2px;
-  }
-  .banner p {
-    margin: 0;
-    color: #b8b8b8;
-    font-size: 13px;
-    letter-spacing: 0.2px;
-  }
+  .banner h1 { margin: 0 0 8px 0; font-size: 22px; font-weight: 700; letter-spacing: -0.2px; }
+  .banner p { margin: 0; color: #b8b8b8; font-size: 13px; letter-spacing: 0.2px; }
 
-  .contenido { padding: 34px 32px 32px; text-align: center; }
+  .contenido { padding: 30px 32px 32px; text-align: center; }
   .contenido p.descripcion {
     font-size: 14px;
     color: #5b6270;
     line-height: 1.6;
-    margin: 0 0 26px 0;
+    margin: 0 0 22px 0;
   }
+
+  .campo-clave { text-align: left; margin-bottom: 18px; }
+  .campo-clave label {
+    display: block;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 6px;
+  }
+  .input-clave-wrap {
+    position: relative;
+    display: flex;
+  }
+  .input-clave-wrap input {
+    flex: 1;
+    padding: 11px 42px 11px 14px;
+    border: 1.5px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+  }
+  .input-clave-wrap input:focus {
+    outline: none;
+    border-color: #d11a1a;
+  }
+  .btn-ver-clave {
+    position: absolute;
+    right: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 15px;
+    color: #6b7280;
+    padding: 6px;
+  }
+  .recordar-clave {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 9px;
+    font-size: 12.5px;
+    color: #6b7280;
+  }
+  .recordar-clave input { width: 14px; height: 14px; accent-color: #d11a1a; }
 
   .btn-generar {
     background: #d11a1a;
@@ -86,23 +119,11 @@
     box-shadow: 0 4px 12px rgba(209, 26, 26, 0.28);
     transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
   }
-  .btn-generar:hover:not(:disabled) {
-    background: #ad1414;
-    box-shadow: 0 6px 16px rgba(209, 26, 26, 0.34);
-  }
+  .btn-generar:hover:not(:disabled) { background: #ad1414; box-shadow: 0 6px 16px rgba(209, 26, 26, 0.34); }
   .btn-generar:active:not(:disabled) { transform: translateY(1px); }
-  .btn-generar:disabled {
-    background: #eeb3b3;
-    box-shadow: none;
-    cursor: not-allowed;
-  }
+  .btn-generar:disabled { background: #eeb3b3; box-shadow: none; cursor: not-allowed; }
 
-  .estado {
-    margin-top: 18px;
-    font-size: 13.5px;
-    min-height: 20px;
-    line-height: 1.5;
-  }
+  .estado { margin-top: 18px; font-size: 13.5px; min-height: 20px; line-height: 1.5; }
   .estado.cargando { color: #6b7280; }
   .estado.exito { color: #16803c; font-weight: 600; }
   .estado.error { color: #d11a1a; font-weight: 600; }
@@ -136,13 +157,7 @@
   .link-reporte:hover { background: #262626; }
   .link-reporte.visible { display: block; }
 
-  .footer {
-    text-align: center;
-    color: #9ca3af;
-    font-size: 12px;
-    padding-top: 20px;
-    letter-spacing: 0.2px;
-  }
+  .footer { text-align: center; color: #9ca3af; font-size: 12px; padding-top: 20px; letter-spacing: 0.2px; }
 </style>
 </head>
 <body>
@@ -155,9 +170,22 @@
       </div>
       <div class="contenido">
         <p class="descripcion">
-          Al presionar el botón se genera el reporte de asistencias del mes anterior,
-          se envía por mail y se abre acá mismo.
+          Ingresá la clave de acceso y presioná el botón para generar el reporte
+          de asistencias del mes anterior. Se envía por mail y se abre acá mismo.
         </p>
+
+        <div class="campo-clave">
+          <label for="claveAcceso">Clave de acceso</label>
+          <div class="input-clave-wrap">
+            <input type="password" id="claveAcceso" placeholder="Ingresá la clave" autocomplete="off">
+            <button type="button" class="btn-ver-clave" onclick="toggleVerClave()" id="btnVerClave">👁</button>
+          </div>
+          <label class="recordar-clave">
+            <input type="checkbox" id="recordarClave">
+            Recordar clave en este navegador
+          </label>
+        </div>
+
         <button class="btn-generar" id="btnGenerar" onclick="generarReporte()">
           Generar reporte del mes anterior
         </button>
@@ -171,13 +199,57 @@
   </div>
 
   <script>
-    // Reemplazar por la URL de PRODUCCIÓN del webhook (no la de test)
+    // URL de PRODUCCIÓN del webhook (no la de test) — activá el workflow en n8n
     const WEBHOOK_URL = "https://envy-recollect-last.ngrok-free.dev/webhook/asistencia";
+    // Nombre del header que configuraste en el nodo Webhook de n8n (Header Auth)
+    const NOMBRE_HEADER = "X-Api-Key";
+
+    const inputClave = document.getElementById('claveAcceso');
+    const checkRecordar = document.getElementById('recordarClave');
+    const STORAGE_KEY = 'top_asistencias_clave';
+
+    // Si había una clave guardada en este navegador, la precarga
+    (function cargarClaveGuardada() {
+      try {
+        const guardada = localStorage.getItem(STORAGE_KEY);
+        if (guardada) {
+          inputClave.value = guardada;
+          checkRecordar.checked = true;
+        }
+      } catch (e) { /* localStorage no disponible, se ignora */ }
+    })();
+
+    function toggleVerClave() {
+      const btn = document.getElementById('btnVerClave');
+      if (inputClave.type === 'password') {
+        inputClave.type = 'text';
+        btn.textContent = '🙈';
+      } else {
+        inputClave.type = 'password';
+        btn.textContent = '👁';
+      }
+    }
 
     async function generarReporte() {
       const btn = document.getElementById('btnGenerar');
       const estado = document.getElementById('estado');
       const linkReporte = document.getElementById('linkReporte');
+      const clave = inputClave.value.trim();
+
+      if (!clave) {
+        estado.className = 'estado error';
+        estado.textContent = '✗ Ingresá la clave de acceso antes de generar el reporte.';
+        return;
+      }
+
+      // Guardar o borrar la clave según el checkbox
+      try {
+        if (checkRecordar.checked) {
+          localStorage.setItem(STORAGE_KEY, clave);
+        } else {
+          localStorage.removeItem(STORAGE_KEY);
+        }
+      } catch (e) { /* localStorage no disponible, se ignora */ }
 
       btn.disabled = true;
       linkReporte.classList.remove('visible');
@@ -187,23 +259,27 @@
       try {
         const respuesta = await fetch(WEBHOOK_URL, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            [NOMBRE_HEADER]: clave
+          },
           body: JSON.stringify({ origen: 'boton-web', fecha: new Date().toISOString() })
         });
 
+        if (respuesta.status === 401 || respuesta.status === 403) {
+          throw new Error('Clave incorrecta. Verificá y volvé a intentar.');
+        }
         if (!respuesta.ok) {
           throw new Error('El servidor respondió con error ' + respuesta.status);
         }
 
-        // El webhook debe devolver el archivo HTML del reporte (ver nodo "Respond to Webhook")
+        // El webhook debe devolver el archivo HTML del reporte (nodo "Respond to Webhook")
         const blobHtml = await respuesta.blob();
         const url = URL.createObjectURL(blobHtml);
 
-        // Intento 1: abrir automáticamente en una pestaña nueva
         const ventana = window.open(url, '_blank');
 
         if (!ventana || ventana.closed || typeof ventana.closed === 'undefined') {
-          // El navegador bloqueó el popup: dejamos el link clickeable como respaldo
           estado.className = 'estado exito';
           estado.textContent = '✓ Reporte generado. Tu navegador bloqueó la ventana emergente, usá el botón de abajo:';
         } else {
@@ -211,13 +287,12 @@
           estado.textContent = '✓ Reporte generado y enviado por mail. Se abrió en una pestaña nueva.';
         }
 
-        // Siempre dejamos el link disponible, se haya abierto solo o no
         linkReporte.href = url;
         linkReporte.classList.add('visible');
 
       } catch (error) {
         estado.className = 'estado error';
-        estado.textContent = '✗ No se pudo generar el reporte: ' + error.message;
+        estado.textContent = '✗ ' + error.message;
       } finally {
         btn.disabled = false;
       }
