@@ -6,29 +6,36 @@
 <title>Generador de Reporte de Asistencias - Top Neumaticos</title>
 <style>
   * { box-sizing: border-box; }
+  html, body {
+    height: 100%;
+    margin: 0;
+  }
   body {
     font-family: 'Segoe UI', system-ui, Arial, sans-serif;
-    background: #eef0f2;
-    margin: 0;
-    padding: 40px 16px;
+    background: radial-gradient(circle at 50% 0%, #f5f6f7 0%, #e7e9ec 100%);
     color: #1a1a1a;
+  }
+  .page {
     min-height: 100vh;
+    width: 100%;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    padding: 40px 16px;
   }
   .card {
     background: #fff;
-    max-width: 480px;
+    max-width: 460px;
     width: 100%;
-    border-radius: 12px;
+    border-radius: 16px;
     overflow: hidden;
-    box-shadow: 0 4px 18px rgba(0,0,0,0.1);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.14), 0 2px 8px rgba(0,0,0,0.06);
   }
   .banner {
     background: #0c0c0c;
     color: #fff;
-    padding: 28px 32px;
+    padding: 32px 32px 26px;
     border-bottom: 4px solid #d11a1a;
     text-align: center;
   }
@@ -40,40 +47,61 @@
     font-weight: 700;
     letter-spacing: 0.6px;
     text-transform: uppercase;
-    padding: 5px 12px;
-    border-radius: 4px;
-    margin-bottom: 12px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    margin-bottom: 16px;
   }
-  .banner h1 { margin: 0 0 6px 0; font-size: 21px; font-weight: 700; }
-  .banner p { margin: 0; color: #c7c7c7; font-size: 13px; }
+  .banner h1 {
+    margin: 0 0 8px 0;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.2px;
+  }
+  .banner p {
+    margin: 0;
+    color: #b8b8b8;
+    font-size: 13px;
+    letter-spacing: 0.2px;
+  }
 
-  .contenido { padding: 32px; text-align: center; }
+  .contenido { padding: 34px 32px 32px; text-align: center; }
   .contenido p.descripcion {
     font-size: 14px;
-    color: #555;
-    line-height: 1.5;
-    margin: 0 0 24px 0;
+    color: #5b6270;
+    line-height: 1.6;
+    margin: 0 0 26px 0;
   }
 
   .btn-generar {
     background: #d11a1a;
     color: #fff;
     border: none;
-    padding: 14px 28px;
-    border-radius: 8px;
+    padding: 15px 28px;
+    border-radius: 10px;
     font-size: 15px;
     font-weight: 700;
+    letter-spacing: 0.2px;
     cursor: pointer;
     width: 100%;
-    transition: background 0.15s;
+    box-shadow: 0 4px 12px rgba(209, 26, 26, 0.28);
+    transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
   }
-  .btn-generar:hover:not(:disabled) { background: #ad1414; }
-  .btn-generar:disabled { background: #e5a3a3; cursor: not-allowed; }
+  .btn-generar:hover:not(:disabled) {
+    background: #ad1414;
+    box-shadow: 0 6px 16px rgba(209, 26, 26, 0.34);
+  }
+  .btn-generar:active:not(:disabled) { transform: translateY(1px); }
+  .btn-generar:disabled {
+    background: #eeb3b3;
+    box-shadow: none;
+    cursor: not-allowed;
+  }
 
   .estado {
     margin-top: 18px;
     font-size: 13.5px;
     min-height: 20px;
+    line-height: 1.5;
   }
   .estado.cargando { color: #6b7280; }
   .estado.exito { color: #16803c; font-weight: 600; }
@@ -92,33 +120,55 @@
   }
   @keyframes girar { to { transform: rotate(360deg); } }
 
+  .link-reporte {
+    display: none;
+    margin-top: 16px;
+    background: #0c0c0c;
+    color: #fff !important;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 13px 20px;
+    border-radius: 10px;
+    text-align: center;
+    transition: background 0.15s;
+  }
+  .link-reporte:hover { background: #262626; }
+  .link-reporte.visible { display: block; }
+
   .footer {
     text-align: center;
     color: #9ca3af;
-    font-size: 11.5px;
-    padding: 14px 0 0;
+    font-size: 12px;
+    padding-top: 20px;
+    letter-spacing: 0.2px;
   }
 </style>
 </head>
 <body>
-  <div class="card">
-    <div class="banner">
-      <span class="tag">Registro de Asistencias del Personal</span>
-      <h1>Generador de Reporte de Asistencias</h1>
-      <p>Top Neumaticos S.R.L.</p>
+  <div class="page">
+    <div class="card">
+      <div class="banner">
+        <span class="tag">Registro de Asistencias del Personal</span>
+        <h1>Generador de Reporte de Asistencias</h1>
+        <p>Top Neumaticos S.R.L.</p>
+      </div>
+      <div class="contenido">
+        <p class="descripcion">
+          Al presionar el botón se genera el reporte de asistencias del mes anterior,
+          se envía por mail y se abre acá mismo.
+        </p>
+        <button class="btn-generar" id="btnGenerar" onclick="generarReporte()">
+          Generar reporte del mes anterior
+        </button>
+        <div class="estado" id="estado"></div>
+        <a class="link-reporte" id="linkReporte" target="_blank" rel="noopener">
+          📄 Abrir reporte de asistencias
+        </a>
+      </div>
     </div>
-    <div class="contenido">
-      <p class="descripcion">
-        Al presionar el botón se genera el reporte de asistencias del mes anterior
-        y se envía por mail automáticamente.
-      </p>
-      <button class="btn-generar" id="btnGenerar" onclick="generarReporte()">
-        Generar reporte del mes anterior
-      </button>
-      <div class="estado" id="estado"></div>
-    </div>
+    <p class="footer">Top Neumaticos S.R.L. · Herramienta interna</p>
   </div>
-  <p class="footer">Top Neumaticos S.R.L. · Herramienta interna</p>
 
   <script>
     // Reemplazar por la URL de PRODUCCIÓN del webhook (no la de test)
@@ -127,8 +177,10 @@
     async function generarReporte() {
       const btn = document.getElementById('btnGenerar');
       const estado = document.getElementById('estado');
+      const linkReporte = document.getElementById('linkReporte');
 
       btn.disabled = true;
+      linkReporte.classList.remove('visible');
       estado.className = 'estado cargando';
       estado.innerHTML = '<span class="spinner"></span>Generando reporte, puede tardar unos segundos...';
 
@@ -143,8 +195,26 @@
           throw new Error('El servidor respondió con error ' + respuesta.status);
         }
 
-        estado.className = 'estado exito';
-        estado.textContent = '✓ Reporte generado y enviado correctamente.';
+        // El webhook debe devolver el archivo HTML del reporte (ver nodo "Respond to Webhook")
+        const blobHtml = await respuesta.blob();
+        const url = URL.createObjectURL(blobHtml);
+
+        // Intento 1: abrir automáticamente en una pestaña nueva
+        const ventana = window.open(url, '_blank');
+
+        if (!ventana || ventana.closed || typeof ventana.closed === 'undefined') {
+          // El navegador bloqueó el popup: dejamos el link clickeable como respaldo
+          estado.className = 'estado exito';
+          estado.textContent = '✓ Reporte generado. Tu navegador bloqueó la ventana emergente, usá el botón de abajo:';
+        } else {
+          estado.className = 'estado exito';
+          estado.textContent = '✓ Reporte generado y enviado por mail. Se abrió en una pestaña nueva.';
+        }
+
+        // Siempre dejamos el link disponible, se haya abierto solo o no
+        linkReporte.href = url;
+        linkReporte.classList.add('visible');
+
       } catch (error) {
         estado.className = 'estado error';
         estado.textContent = '✗ No se pudo generar el reporte: ' + error.message;
